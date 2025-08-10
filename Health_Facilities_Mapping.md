@@ -20,4 +20,5 @@ Visit the live map here:
 ## 📂 How to Run Locally
 1. Download the repository as ZIP or clone it:
    ```bash
-   git clone https://github.com/YOUR-USERNAME/health-facilities-map.git
+   git clone https://iahmed310.github.io/health-facilities-map/
+
