@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>UNICEF Supported Health Facilities in South KP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+    body { margin:0; padding:0; }
+    #map { height: 100vh; }
+    .header {
+        background: linear-gradient(90deg, #0077b6, #00b4d8);
+        color: white;
+        padding: 15px;
+        font-size: 26px;
+        font-weight: bold;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        letter-spacing: 1px;
+    }
+</style>
+</head>
+<body>
+
+<div class="header">UNICEF Supported Health Facilities in South KP</div>
+<div id="map"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- PapaParse for CSV parsing -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+<script>
+// Your published Google Sheet CSV link
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRy9_mdFemRLU4QkQ5OD2M_5UJx0aWp7Z6CIlP40V0kUbzjJPtnVt4x8jlY1Z-zwUrEOOPY3w6O3nEd/pub?gid=988365036&single=true&output=csv";
+
+// Initialize map
+const map = L.map('map').setView([31.5, 70.5], 8);
+
+// Add OpenStreetMap tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+// Fetch and parse CSV
+Papa.parse(sheetURL, {
+    download: true,
+    header: true,
+    complete: function(results) {
+        results.data.forEach(row => {
+            let lat = parseFloat(row.Latitude);
+            let lng = parseFloat(row.Longitude);
+            let hfName = row["Name of Health Facility"];
+            
+            if (!isNaN(lat) && !isNaN(lng)) {
+                // Create popup content
+                let popupContent = `<b>${hfName}</b><br>`;
+                for (let key in row) {
+                    if (key !== "Latitude" && key !== "Longitude" && key !== "Name of Health Facility") {
+                        popupContent += `<b>${key}:</b> ${row[key]}<br>`;
+                    }
+                }
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup(popupContent);
+            }
+        });
+    }
+});
+</script>
+
+</body>
+</html>
